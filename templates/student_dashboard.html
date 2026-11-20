@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | CampusCare</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5fb;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: #123b70;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            font-size: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Main dashboard */
+        .container {
+            padding: 40px 7%;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            color: #123b70;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #666;
+        }
+
+        /* Dashboard cards */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #123b70;
+            margin-bottom: 12px;
+            font-size: 21px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card a {
+            display: inline-block;
+            background-color: #123b70;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .card a:hover {
+            background-color: #2875c7;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation bar -->
+    <nav>
+
+        <h2>CampusCare</h2>
+
+        <a href="/logout">Logout</a>
+
+    </nav>
+
+
+    <!-- Dashboard content -->
+    <div class="container">
+
+        <div class="welcome">
+
+            <h1>Welcome, {{ name }}!</h1>
+
+            <p>
+                Manage your campus complaints from one place.
+            </p>
+
+        </div>
+
+
+        <!-- Dashboard cards -->
+        <div class="card-container">
+
+
+            <div class="card">
+
+                <h3>Submit New Complaint</h3>
+
+                <p>
+                    Report problems related to electricity,
+                    water supply, classrooms and other
+                    campus facilities.
+                </p>
+
+                <a href="/submit_complaint">
+                    Submit Complaint
+                </a>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>My Complaints</h3>
+
+                <p>
+                    View all the complaints submitted
+                    by you and check their current status.
+                </p>
+
+                <a href="/my_complaints">
+                    View Complaints
+                </a>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Track Complaint</h3>
+
+                <p>
+                    Track the progress of your complaint
+                    and check whether it is pending,
+                    in progress or resolved.
+                </p>
+
+                <a href="{{ url_for('track_complaint') }}">
+    Track Status
+</a>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>My Profile</h3>
+
+                <p>
+                    View your CampusCare account
+                    and personal information.
+                </p>
+
+                <a href="/my_profile">
+                    View Profile
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            © 2026 CampusCare | Smart Campus Complaint Management System
+        </p>
+
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusCare | Smart Campus Complaint System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            color: #222;
+        }
+
+        /* Navigation bar */
+        nav {
+            background-color: #123b70;
+            color: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            font-size: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: linear-gradient(
+                135deg,
+                #123b70,
+                #2875c7
+            );
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .hero button {
+            background-color: white;
+            color: #123b70;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .hero button:hover {
+            background-color: #e2eaf5;
+        }
+
+        /* Features section */
+        .features {
+            padding: 60px 8%;
+            text-align: center;
+        }
+
+        .features h2 {
+            color: #123b70;
+            margin-bottom: 35px;
+            font-size: 30px;
+        }
+
+        .feature-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .feature-box {
+            background-color: white;
+            width: 280px;
+            padding: 30px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .feature-box h3 {
+            color: #123b70;
+            margin-bottom: 15px;
+        }
+
+        .feature-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #123b70;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <h2>CampusCare</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </nav>
+
+
+    <!-- Main section -->
+    <section class="hero">
+
+        <h1>Welcome to CampusCare</h1>
+
+        <p>
+            Smart Campus Complaint Management System
+        </p>
+
+        <p>
+            Report campus problems, track complaints
+            and help make your college better.
+        </p>
+
+        <br>
+
+        <button onclick="window.location.href='/register'">
+            Get Started
+        </button>
+
+    </section>
+
+
+    <!-- Features -->
+    <section class="features">
+
+        <h2>Our Services</h2>
+
+        <div class="feature-container">
+
+            <div class="feature-box">
+                <h3>Submit Complaint</h3>
+
+                <p>
+                    Easily report problems related to
+                    classrooms, electricity, water and more.
+                </p>
+            </div>
+
+
+            <div class="feature-box">
+                <h3>Track Complaint</h3>
+
+                <p>
+                    Check the current status of your
+                    submitted complaints.
+                </p>
+            </div>
+
+
+            <div class="feature-box">
+                <h3>Quick Resolution</h3>
+
+                <p>
+                    Help college departments solve
+                    problems in an organized way.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 CampusCare | Smart Campus Complaint Management System</p>
+    </footer>
+
+</body>
+</html>

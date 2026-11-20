@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Complaint | CampusCare</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f0f4f8;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #123b78;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            background: #123b78;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #123b78;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Search Complaint</h2>
+
+    <form method="POST">
+        <input type="number" name="complaint_id"
+               placeholder="Enter Complaint ID" required>
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if complaint %}
+    <h3>Complaint Found</h3>
+
+    <table>
+        <tr><th>ID</th><td>{{ complaint[0] }}</td></tr>
+        <tr><th>Student</th><td>{{ complaint[1] }}</td></tr>
+        <tr><th>Category</th><td>{{ complaint[2] }}</td></tr>
+        <tr><th>Location</th><td>{{ complaint[3] }}</td></tr>
+        <tr><th>Description</th><td>{{ complaint[4] }}</td></tr>
+        <tr><th>Priority</th><td>{{ complaint[5] }}</td></tr>
+        <tr><th>Status</th><td>{{ complaint[6] }}</td></tr>
+        <tr><th>Date</th><td>{{ complaint[7] }}</td></tr>
+    </table>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+</div>
+</body>
+</html>

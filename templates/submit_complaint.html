@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Submit Complaint | CampusCare</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5fb;
+        }
+
+        nav {
+            background-color: #123b70;
+            color: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #123b70;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #123b70;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2875c7;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #123b70;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2 style="color:white;">CampusCare</h2>
+        <a href="/dashboard">Back to Dashboard</a>
+    </nav>
+
+    <div class="container">
+
+        <h2>Submit New Complaint</h2>
+
+        <p class="subtitle">
+            Please provide details about your campus problem.
+        </p>
+
+        <form action="/submit_complaint" method="POST">
+
+            <label>Complaint Category</label>
+
+            <select name="category" required>
+                <option value="">Select Category</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Water Supply">Water Supply</option>
+                <option value="Internet / Wi-Fi">Internet / Wi-Fi</option>
+                <option value="Cleanliness">Cleanliness</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Classroom Equipment">Classroom Equipment</option>
+                <option value="Other">Other</option>
+            </select>
+
+
+            <label>Complaint Location</label>
+
+            <select name="location" required>
+                <option value="">Select Location</option>
+                <option value="Classroom">Classroom</option>
+                <option value="Computer Lab">Computer Lab</option>
+                <option value="Library">Library</option>
+                <option value="Washroom">Washroom</option>
+                <option value="College Campus">College Campus</option>
+                <option value="Canteen">Canteen</option>
+                <option value="Other">Other</option>
+            </select>
+
+
+            <label>Complaint Description</label>
+
+            <textarea
+                name="description"
+                placeholder="Describe your problem in detail..."
+                required
+                minlength="10"
+            ></textarea>
+
+
+            <label>Complaint Priority</label>
+
+            <select name="priority" required>
+                <option value="">Select Priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+
+
+            <button type="submit">
+                Submit Complaint
+            </button>
+
+        </form>
+
+        <a href="/dashboard" class="back-link">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile | CampusCare</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .profile-box {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #ccc;
+        }
+
+        h2 {
+            color: #07519b;
+            text-align: center;
+        }
+
+        .detail {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            background: #07519b;
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-box">
+        <h2>My Profile</h2>
+
+        <div class="detail">
+            <strong>Name:</strong> {{ user[0] }}
+        </div>
+
+        <div class="detail">
+            <strong>Email:</strong> {{ user[1] }}
+        </div>
+
+        <div class="detail">
+            <strong>Role:</strong> {{ user[2] }}
+        </div>
+
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

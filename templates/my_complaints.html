@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Complaints | CampusCare</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f7fb;
+            padding: 30px;
+        }
+        h1 {
+            color: #102b55;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #102b55;
+            color: white;
+        }
+        a {
+            color: #102b55;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Complaints</h1>
+
+    {% if complaints %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+
+        {% for c in complaints %}
+        <tr>
+            <td>{{ c[0] }}</td>
+            <td>{{ c[1] }}</td>
+            <td>{{ c[2] }}</td>
+            <td>{{ c[3] }}</td>
+            <td>{{ c[4] }}</td>
+            <td>{{ c[5] }}</td>
+            <td>{{ c[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <p>You have not submitted any complaints yet.</p>
+    {% endif %}
+
+    <br>
+    <a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>
