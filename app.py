@@ -8,6 +8,9 @@ from dsa import ComplaintPriorityQueue, ComplaintHashMap, merge_sort_complaints,
 
 
 app = Flask(__name__)
+
+
+# Create default admin account
 def create_admin():
 
     connection = get_connection()
@@ -26,6 +29,13 @@ def create_admin():
 
     connection.commit()
     connection.close()
+
+
+# Initialize database when application starts
+initialize_database()
+create_admin()
+
+
 # Secret key for session
 app.secret_key = "campuscare_secret_key"
 
@@ -47,17 +57,14 @@ def register():
         password = request.form["password"]
         role = request.form["role"]
 
-        # Check empty fields
         if not name or not email or not password:
             flash("Please fill all the fields.")
             return redirect(url_for("register"))
 
-        # Allow only student and staff registration
         if role not in ["student", "staff"]:
             flash("Invalid user role.")
             return redirect(url_for("register"))
 
-        # Hash password
         hashed_password = generate_password_hash(password)
 
         connection = get_connection()
@@ -106,7 +113,6 @@ def login():
 
         connection.close()
 
-        # Check email and password
         if user and check_password_hash(user[3], password):
 
             session["user_id"] = user[0]
@@ -123,7 +129,6 @@ def login():
 
 
 # Dashboard after login
-# Dashboard after login
 @app.route("/dashboard")
 def dashboard():
 
@@ -132,16 +137,22 @@ def dashboard():
 
     name = session["user_name"]
     role = session["user_role"]
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    # Student dashboard
     if role == "student":
+
+        connection.close()
+
         return render_template(
             "student_dashboard.html",
             name=name
         )
 
+    # Staff dashboard
     elif role == "staff":
-
-        connection = get_connection()
-        cursor = connection.cursor()
 
         cursor.execute("""
             SELECT
@@ -161,8 +172,9 @@ def dashboard():
         """, (session["user_id"],))
 
         complaints = cursor.fetchall()
-       
         complaints = merge_sort_complaints(complaints)
+
+        connection.close()
 
         return render_template(
             "staff_dashboard.html",
@@ -170,132 +182,120 @@ def dashboard():
             complaints=complaints
         )
 
+    # Admin dashboard
     elif role == "admin":
 
-      connection = get_connection()
-    cursor = connection.cursor()
+        cursor.execute("""
+            SELECT
+                complaints.id,
+                users.name,
+                categories.category_name,
+                complaints.location,
+                complaints.description,
+                complaints.priority,
+                complaints.status,
+                complaints.created_at,
+                complaints.assigned_staff
+            FROM complaints
+            JOIN users ON complaints.user_id = users.id
+            JOIN categories ON complaints.category_id = categories.id
+            ORDER BY complaints.id DESC
+        """)
 
-    # Get all complaints
-    cursor.execute("""
-        SELECT
-            complaints.id,
-            users.name,
-            categories.category_name,
-            complaints.location,
-            complaints.description,
-            complaints.priority,
-            complaints.status,
-            complaints.created_at,
-            complaints.assigned_staff
-        FROM complaints
-        JOIN users
-        ON complaints.user_id = users.id
-        JOIN categories
-        ON complaints.category_id = categories.id
-        ORDER BY complaints.id DESC
-    """)
+        complaints = cursor.fetchall()
 
-    complaints = cursor.fetchall()
-    # FIFO Queue
-    complaint_queue = ComplaintQueue()
+        # FIFO Queue
+        complaint_queue = ComplaintQueue()
 
-    for complaint in complaints:
-      complaint_queue.add_complaint(complaint)
+        for complaint in complaints:
+            complaint_queue.add_complaint(complaint)
 
-    complaints = complaint_queue.show_queue()
-    # Apply Priority Queue
-    priority_queue = ComplaintPriorityQueue()
+        complaints = complaint_queue.show_queue()
 
-    for complaint in complaints:
-      priority_queue.add_complaint(complaint)
-   
-    complaints = priority_queue.show_complaints()
+        # Priority Queue
+        priority_queue = ComplaintPriorityQueue()
 
-    # Get all staff members
-    cursor.execute("""
-        SELECT id, name
-        FROM users
-        WHERE role = 'staff'
-    """)
+        for complaint in complaints:
+            priority_queue.add_complaint(complaint)
 
-    staff_members = cursor.fetchall()
+        complaints = priority_queue.show_complaints()
 
-    # Category-wise complaint count
-    cursor.execute("""
-        SELECT categories.category_name, COUNT(complaints.id)
-        FROM categories
-        LEFT JOIN complaints
-        ON categories.id = complaints.category_id
-        GROUP BY categories.id, categories.category_name
-        ORDER BY COUNT(complaints.id) DESC
-    """)
+        # Get staff members
+        cursor.execute("""
+            SELECT id, name
+            FROM users
+            WHERE role = 'staff'
+        """)
 
-    category_stats = cursor.fetchall()
+        staff_members = cursor.fetchall()
 
-    # Average resolution time in hours
-    cursor.execute("""
-        SELECT AVG(
-            (julianday(history.updated_at) -
-             julianday(complaints.created_at)) * 24
+        # Category-wise complaint count
+        cursor.execute("""
+            SELECT categories.category_name, COUNT(complaints.id)
+            FROM categories
+            LEFT JOIN complaints
+            ON categories.id = complaints.category_id
+            GROUP BY categories.id, categories.category_name
+            ORDER BY COUNT(complaints.id) DESC
+        """)
+
+        category_stats = cursor.fetchall()
+
+        # Average resolution time
+        cursor.execute("""
+            SELECT AVG(
+                (julianday(history.updated_at) -
+                 julianday(complaints.created_at)) * 24
+            )
+            FROM complaints
+            JOIN complaint_history AS history
+            ON complaints.id = history.complaint_id
+            WHERE history.new_status = 'Resolved'
+        """)
+
+        average_resolution_time = cursor.fetchone()[0]
+
+        if average_resolution_time is None:
+            average_resolution_time = 0
+        else:
+            average_resolution_time = round(
+                average_resolution_time, 2
+            )
+
+        connection.close()
+
+        # Dashboard statistics
+        total_complaints = len(complaints)
+
+        pending_complaints = sum(
+            1 for c in complaints if c[6] == "Pending"
         )
-        FROM complaints
-        JOIN complaint_history AS history
-        ON complaints.id = history.complaint_id
-        WHERE history.new_status = 'Resolved'
-    """)
 
-    average_resolution_time = cursor.fetchone()[0]
+        in_progress_complaints = sum(
+            1 for c in complaints if c[6] == "In Progress"
+        )
 
-    if average_resolution_time is None:
-        average_resolution_time = 0
-    else:
-        average_resolution_time = round(average_resolution_time, 2)
+        resolved_complaints = sum(
+            1 for c in complaints if c[6] == "Resolved"
+        )
+
+        return render_template(
+            "admin_dashboard.html",
+            name=name,
+            complaints=complaints,
+            staff_members=staff_members,
+            total_complaints=total_complaints,
+            pending_complaints=pending_complaints,
+            in_progress_complaints=in_progress_complaints,
+            resolved_complaints=resolved_complaints,
+            category_stats=category_stats,
+            average_resolution_time=average_resolution_time
+        )
 
     connection.close()
-
-    # Dashboard statistics
-    total_complaints = len(complaints)
-
-    pending_complaints = sum(
-        1 for c in complaints if c[6] == "Pending"
-    )
-
-    in_progress_complaints = sum(
-        1 for c in complaints if c[6] == "In Progress"
-    )
-
-    resolved_complaints = sum(
-        1 for c in complaints if c[6] == "Resolved"
-    )
-
-    return render_template(
-        "admin_dashboard.html",
-        name=name,
-        complaints=complaints,
-        staff_members=staff_members,
-        total_complaints=total_complaints,
-        pending_complaints=pending_complaints,
-        in_progress_complaints=in_progress_complaints,
-        resolved_complaints=resolved_complaints,
-        category_stats=category_stats,
-        average_resolution_time=average_resolution_time
-    )
-
-
-
-    return render_template(
-        "admin_dashboard.html",
-        name=name,
-        complaints=complaints,
-        staff_members=staff_members,
-        total_complaints=total_complaints,
-        pending_complaints=pending_complaints,
-        in_progress_complaints=in_progress_complaints,
-        resolved_complaints=resolved_complaints
-    )
-        
-
     return "Invalid user role."
+
+
 # Student My Profile
 @app.route("/my_profile")
 def my_profile():
@@ -319,6 +319,8 @@ def my_profile():
     connection.close()
 
     return render_template("my_profile.html", user=user)
+
+
 # Update complaint status by staff
 @app.route("/update_complaint/<int:complaint_id>", methods=["POST"])
 def update_complaint(complaint_id):
@@ -380,10 +382,6 @@ def update_complaint(complaint_id):
     return redirect(url_for("dashboard"))
 
 
-
-
-  
-
 # Submit new complaint
 @app.route("/submit_complaint", methods=["GET", "POST"])
 def submit_complaint():
@@ -444,6 +442,8 @@ def submit_complaint():
             connection.close()
 
     return render_template("submit_complaint.html")
+
+
 # View student's complaints
 @app.route("/my_complaints")
 def my_complaints():
@@ -476,6 +476,9 @@ def my_complaints():
         "my_complaints.html",
         complaints=complaints
     )
+
+
+# Track complaints
 @app.route("/track_complaint")
 def track_complaint():
 
@@ -527,9 +530,8 @@ def track_complaint():
         history_by_complaint=history_by_complaint
     )
 
-        
 
-    # Assign complaint to staff
+# Assign complaint to staff
 @app.route("/assign_staff/<int:complaint_id>", methods=["POST"])
 def assign_staff(complaint_id):
 
@@ -566,6 +568,7 @@ def assign_staff(complaint_id):
 
     return redirect(url_for("dashboard"))
 
+
 # Logout
 @app.route("/logout")
 def logout():
@@ -576,8 +579,8 @@ def logout():
 
     return redirect(url_for("login"))
 
-# Search complaint using Hash Map
 
+# Search complaint using Hash Map
 @app.route("/search_complaint", methods=["GET", "POST"])
 def search_complaint():
 
@@ -615,7 +618,7 @@ def search_complaint():
     if request.method == "POST":
         complaint_id = request.form.get("complaint_id")
 
-        if complaint_id.isdigit():
+        if complaint_id and complaint_id.isdigit():
             result = complaint_map.search_complaint(int(complaint_id))
 
         if result is None:
@@ -627,10 +630,6 @@ def search_complaint():
     )
 
 
-# Run application
+# Run application locally
 if __name__ == "__main__":
-
-    initialize_database()
-    create_admin()
-
     app.run(debug=True)

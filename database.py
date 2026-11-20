@@ -16,12 +16,12 @@ def get_connection():
 
 
 # Create database tables
+# Create database tables
 def create_tables():
 
     connection = get_connection()
     cursor = connection.cursor()
 
-    # Users table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +32,6 @@ def create_tables():
         )
     """)
 
-    # Departments table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS departments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +39,6 @@ def create_tables():
         )
     """)
 
-    # Categories table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +47,6 @@ def create_tables():
         )
     """)
 
-    # Complaints table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS complaints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,13 +57,10 @@ def create_tables():
             priority TEXT DEFAULT 'Medium',
             status TEXT DEFAULT 'Pending',
             assigned_staff INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (category_id) REFERENCES categories(id)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
-    # Complaint history table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS complaint_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,8 +68,7 @@ def create_tables():
             old_status TEXT,
             new_status TEXT NOT NULL,
             note TEXT,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (complaint_id) REFERENCES complaints(id)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
@@ -83,6 +76,8 @@ def create_tables():
     connection.close()
 
     print("Database tables created successfully!")
+    
+    
 
 
 # Add default departments and categories
